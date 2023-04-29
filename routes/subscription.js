@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const subscriptionController = require("../controllers/subscriptionController");
+const subscriptionsController = require("../controllers/subscriptionsController");
 const authMiddleware = require("../middleware/auth");
 
-router.get("/", authMiddleware, subscriptionController.getSubscriptionInfo);
-router.post("/upgrade", authMiddleware, subscriptionController.upgrade);
-router.post("/downgrade", authMiddleware, subscriptionController.downgrade);
-router.post(
-  "/payment-method",
-  authMiddleware,
-  subscriptionController.updatePaymentMethod
-);
+router.get("/", subscriptionsController.getSubscriptionInfo);
+router.post("/upgrade", subscriptionsController.upgrade);
+router.post("/downgrade", subscriptionsController.downgrade);
+router.post("/payment-method", subscriptionsController.updatePaymentMethod);
 
 module.exports = router;

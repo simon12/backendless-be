@@ -12,7 +12,7 @@ exports.getSubscriptionInfo = async (req, res) => {
   }
 };
 
-exports.updateSubscription = async (req, res) => {
+exports.upgrade = async (req, res) => {
   try {
     const { planId } = req.body;
     const subscription = await Subscription.findOne({
@@ -23,7 +23,7 @@ exports.updateSubscription = async (req, res) => {
       return res.status(404).json({ message: "Subscription not found" });
     }
 
-    // Update the subscription in Chargebee
+    // Upgrade the subscription in Chargebee
     const chargebeeSubscription = await chargebeeService.updateSubscription(
       subscription.chargebeeId,
       planId
@@ -34,6 +34,55 @@ exports.updateSubscription = async (req, res) => {
 
     res.json(updatedSubscription);
   } catch (error) {
-    res.status(500).json({ message: "Error updating subscription", error });
+    res.status(500).json({ message: "Error upgrading subscription", error });
+  }
+};
+
+exports.downgrade = async (req, res) => {
+  try {
+    const { planId } = req.body;
+    const subscription = await Subscription.findOne({
+      where: { userId: req.user.id },
+    });
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    // Downgrade the subscription in Chargebee
+    const chargebeeSubscription = await chargebeeService.updateSubscription(
+      subscription.chargebeeId,
+      planId
+    );
+
+    // Update the local subscription
+    const updatedSubscription = await subscription.update({ planId });
+
+    res.json(updatedSubscription);
+  } catch (error) {
+    res.status(500).json({ message: "Error downgrading subscription", error });
+  }
+};
+
+exports.updatePaymentMethod = async (req, res) => {
+  try {
+    const { paymentMethodToken } = req.body;
+    const subscription = await Subscription.findOne({
+      where: { userId: req.user.id },
+    });
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    // Update the payment method in Chargebee
+    await chargebeeService.updatePaymentMethod(
+      subscription.chargebeeCustomerId,
+      paymentMethodToken
+    );
+
+    res.json({ message: "Payment method updated" });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating payment method", error });
   }
 };

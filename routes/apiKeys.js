@@ -3,9 +3,9 @@ const router = express.Router();
 const { isAuthenticated } = require("../middleware/auth");
 const apiKeysController = require("../controllers/apiKeysController");
 
-router.get("/", isAuthenticated, apiKeysController.getExternalApiKey);
-router.post("/", isAuthenticated, apiKeysController.createExternalApiKey);
-router.put("/:id", isAuthenticated, apiKeysController.updateExternalApiKey);
-router.delete("/:id", isAuthenticated, apiKeysController.deleteExternalApiKey);
+router.get("/", apiKeysController.getApiKey);
+router.post("/", apiKeysController.createApiKey);
+router.put("/:id", apiKeysController.updateApiKey);
+router.delete("/:id", apiKeysController.deleteApiKey);
 
 module.exports = router;
