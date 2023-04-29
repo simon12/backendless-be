@@ -8,6 +8,9 @@ const morgan = require("morgan");
 // Import custom configurations
 const dbConfig = require("./config/db");
 
+// Import config file
+const config = require("./config");
+
 // Import routes
 const indexRoutes = require("./routes/index");
 const authRoutes = require("./routes/auth");

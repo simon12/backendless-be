@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-async function generateResponse(apiKey, prompt, maxTokens, temperature) {
+async function generateResponse(userApiKey, prompt, maxTokens, temperature) {
   try {
     const response = await axios.post(
       "https://api.openai.com/v1/engines/davinci-codex/completions",
@@ -13,7 +13,7 @@ async function generateResponse(apiKey, prompt, maxTokens, temperature) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer ${userApiKey}`,
         },
       }
     );
