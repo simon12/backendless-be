@@ -10,6 +10,10 @@ Endpoint.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    testVersion: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
