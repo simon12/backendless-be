@@ -14,7 +14,7 @@ const sequelizeOptions = {
 };
 
 if (env === "development" && urlParts.protocol === "sqlite:") {
-  sequelizeOptions.storage = urlParts.pathname;
+  sequelizeOptions.storage = "./database.sqlite";
 } else if (urlParts.protocol === "postgres:") {
   sequelizeOptions.dialectOptions = {
     ssl: {
