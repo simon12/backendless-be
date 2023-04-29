@@ -10,11 +10,12 @@ if (!databaseUrl) {
 const urlParts = new URL(databaseUrl);
 const sequelizeOptions = {
   dialect: urlParts.protocol.replace(/:$/, ""),
-  logging: env !== "production",
+  logging: false,
 };
 
 if (env === "development" && urlParts.protocol === "sqlite:") {
   sequelizeOptions.storage = "./database.sqlite";
+  sequelizeOptions.logging = console.log;
 } else if (urlParts.protocol === "postgres:") {
   sequelizeOptions.dialectOptions = {
     ssl: {

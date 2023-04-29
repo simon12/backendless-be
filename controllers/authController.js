@@ -1,31 +1,58 @@
-const jwt = require("jsonwebtoken");
-const { User } = require("../models");
+const passport = require("passport");
+const User = require("../models/User");
+
+const { Sequelize } = require("sequelize");
 
 exports.register = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.create({ email, password });
-    res.status(201).json(user);
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    const user = new User({ email, password });
+    const savedUser = await user.save();
+    console.log("User saved:", savedUser);
+
+    req.login(savedUser, (err) => {
+      if (err) {
+        console.error("Error logging in after registration:", err);
+        return res
+          .status(500)
+          .json({ message: "Error logging in after registration", error: err });
+      }
+      return res.status(201).json(savedUser);
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error registering user", error });
+    console.error("Error registering user:", error);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res.status(400).json({ message: "Email already in use" });
+    } else {
+      res.status(500).json({ message: "Error creating user", error });
+    }
   }
 };
 
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ where: { email } });
-
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ message: "Invalid email or password" });
+exports.login = async (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error during authentication", error: err });
     }
-
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+    if (!user) {
+      return res.status(400).json({ message: info.message });
+    }
+    req.login(user, (err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Error during login", error: err });
+      }
+      return res.status(200).json(user);
     });
-
-    res.json({ token });
-  } catch (error) {
-    res.status(500).json({ message: "Error logging in", error });
-  }
+  })(req, res, next);
 };

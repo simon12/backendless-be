@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const passport = require("passport");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -32,12 +31,23 @@ const app = express();
 const { connect } = require("./config/database");
 connect();
 
+const session = require("express-session");
+app.use(
+  session({
+    secret: process.env.PASSPORT_SECRET, // replace this with a secret unique to your application
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+const passport = require("./config/passport");
 // Middleware setup
 app.use(cors());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
+app.use(passport.session());
 app.use(morgan("dev"));
 
 const customRoutes = require("./routes/custom");
