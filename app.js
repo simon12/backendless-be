@@ -48,11 +48,11 @@ app.use("/auth", authRoutes);
 app.use("/custom", customRoutes);
 
 // Use the auth middleware for protected routes
-app.use("/endpoints", authMiddleware, endpointsRoutes);
-app.use("/api-keys", authMiddleware, apiKeysRoutes);
-app.use("/subscription", authMiddleware, subscriptionRoutes);
-app.use("/team", authMiddleware, teamRoutes);
-app.use("/usage", authMiddleware, usageRoutes);
+app.use("/endpoints", authMiddleware.isAuthenticated, endpointsRoutes);
+app.use("/api-keys", authMiddleware.isAuthenticated, apiKeysRoutes);
+app.use("/subscription", authMiddleware.isAuthenticated, subscriptionRoutes);
+app.use("/team", authMiddleware.isAuthenticated, teamRoutes);
+app.use("/usage", authMiddleware.isAuthenticated, usageRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
