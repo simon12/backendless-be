@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const { sequelize } = require("../config/database");
 
 class Endpoint extends Model {}
 
@@ -29,6 +29,10 @@ Endpoint.init(
     jsonResponseFormat: {
       type: DataTypes.JSON,
       allowNull: true,
+    },
+    model: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     apiKey: {
       type: DataTypes.STRING,

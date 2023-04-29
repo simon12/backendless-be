@@ -4,9 +4,10 @@ const passport = require("passport");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const morgan = require("morgan");
+require("dotenv").config();
 
 // Import custom configurations
-const dbConfig = require("./config/db");
+const dbConfig = require("./config/database");
 
 // Import config file
 const config = require("./config");
@@ -28,7 +29,7 @@ const errorHandler = require("./middleware/errorHandler");
 const app = express();
 
 // Connect to the DB
-const { connect } = require("./config/db");
+const { connect } = require("./config/database");
 connect();
 
 // Middleware setup

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { isAuthenticated } = require("../middleware/authentication");
+const { isAuthenticated } = require("../middleware/auth");
 const apiKeysController = require("../controllers/apiKeysController");
 
 router.get("/", isAuthenticated, apiKeysController.getExternalApiKey);

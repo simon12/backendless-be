@@ -15,9 +15,12 @@ const execute = async (req, res) => {
       return input[key.trim()] || "";
     });
 
-    const response = await openAIService.generateText(
+    const response = await openAIService.generateResponse(
+      endpoint.apiKey,
       completedPrompt,
-      endpoint.apiKey
+      endpoint.maxTokens,
+      endpoint.temperature,
+      endpoint.model
     );
 
     const output = processOutput(

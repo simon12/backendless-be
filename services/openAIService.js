@@ -1,9 +1,15 @@
 const axios = require("axios");
 
-async function generateResponse(userApiKey, prompt, maxTokens, temperature) {
+async function generateResponse(
+  userApiKey,
+  model,
+  prompt,
+  maxTokens,
+  temperature
+) {
   try {
     const response = await axios.post(
-      "https://api.openai.com/v1/engines/davinci-codex/completions",
+      "https://api.openai.com/v1/engines/${model}/completions",
       {
         prompt: prompt,
         max_tokens: maxTokens,

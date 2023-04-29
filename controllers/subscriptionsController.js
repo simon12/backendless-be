@@ -1,7 +1,7 @@
 const { User, Subscription } = require("../models");
 const chargebeeService = require("../services/chargebeeService");
 
-exports.getSubscription = async (req, res) => {
+exports.getSubscriptionInfo = async (req, res) => {
   try {
     const subscription = await Subscription.findOne({
       where: { userId: req.user.id },
