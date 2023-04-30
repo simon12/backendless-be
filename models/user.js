@@ -7,6 +7,11 @@ const User = sequelize.define("User", {
     primaryKey: true,
     autoIncrement: true,
   },
+  clerkUserId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -18,7 +23,7 @@ const User = sequelize.define("User", {
 });
 
 User.associate = function (models) {
-  User.hasOne(models.ApiKey, { foreignKey: "user_id" });
+  User.hasOne(models.ApiKey, { foreignKey: "clerkUserId" });
 };
 
 module.exports = User;

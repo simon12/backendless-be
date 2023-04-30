@@ -2,8 +2,8 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
 const UserApiKey = sequelize.define("UserApiKey", {
-  user_id: {
-    type: DataTypes.INTEGER,
+  clerkUserId: {
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
@@ -18,7 +18,7 @@ const UserApiKey = sequelize.define("UserApiKey", {
 });
 
 UserApiKey.associate = function (models) {
-  UserApiKey.belongsTo(models.User, { foreignKey: "user_id" });
+  UserApiKey.belongsTo(models.User, { foreignKey: "clerkUserId" });
 };
 
 module.exports = UserApiKey;

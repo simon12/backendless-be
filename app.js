@@ -1,12 +1,11 @@
 const express = require("express");
+const { ClerkExpressWithAuth } = require("@clerk/clerk-sdk-node");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const morgan = require("morgan");
 require("dotenv").config();
-
-const { Clerk } = require("@clerk/clerk-sdk-node");
-const clerk = new Clerk(process.env.CLERK_API_KEY);
 
 // Import custom configurations
 const dbConfig = require("./config/database");
@@ -20,7 +19,6 @@ const endpointsRoutes = require("./routes/endpoints");
 const apiKeysRoutes = require("./routes/apiKeys");
 
 // Import middleware
-const authMiddleware = require("./middleware/auth");
 const errorHandler = require("./middleware/errorHandler");
 
 // Initialize the express application
@@ -60,11 +58,9 @@ app.use("/webhooks", webhookRoutes);
 app.use("/", indexRoutes);
 app.use("/custom", customRoutes);
 
-const { clerkAuth } = require("./middleware/auth");
-
 // Use the auth middleware for protected routes
-app.use("/endpoints", clerkAuth, endpointsRoutes);
-app.use("/api-keys", clerkAuth, apiKeysRoutes);
+app.use("/endpoints", endpointsRoutes);
+app.use("/api-keys", apiKeysRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
