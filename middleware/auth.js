@@ -1,19 +1,23 @@
-const jwt = require("jsonwebtoken");
-const config = require("../config");
+const { Clerk } = require("@clerk/clerk-sdk-node");
 
-module.exports.isAuthenticated = (req, res, next) => {
-  const token = req.header("x-auth-token");
-  if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Access denied. No token provided." });
-  }
+const clerk = new Clerk(process.env.CLERK_API_KEY);
 
+const clerkAuth = async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, config.jwtPrivateKey);
-    req.user = decoded;
+    const sessionToken = req.headers.authorization?.replace("Bearer ", "");
+    if (!sessionToken) {
+      throw new Error("Unauthorized");
+    }
+
+    const session = await clerk.sessions.verify(sessionToken);
+    const userId = session.user_id;
+    req.user = await clerk.users.getUser(userId);
     next();
   } catch (error) {
-    res.status(400).json({ message: "Invalid token." });
+    res.status(401).json({ error: "Unauthorized" });
   }
+};
+
+module.exports = {
+  clerkAuth,
 };

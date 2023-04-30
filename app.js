@@ -5,6 +5,9 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 require("dotenv").config();
 
+const { Clerk } = require("@clerk/clerk-sdk-node");
+const clerk = new Clerk(process.env.CLERK_API_KEY);
+
 // Import custom configurations
 const dbConfig = require("./config/database");
 
@@ -13,12 +16,8 @@ const config = require("./config");
 
 // Import routes
 const indexRoutes = require("./routes/index");
-const authRoutes = require("./routes/auth");
 const endpointsRoutes = require("./routes/endpoints");
 const apiKeysRoutes = require("./routes/apiKeys");
-const subscriptionRoutes = require("./routes/subscription");
-const teamRoutes = require("./routes/team");
-const usageRoutes = require("./routes/usage");
 
 // Import middleware
 const authMiddleware = require("./middleware/auth");
@@ -31,38 +30,37 @@ const app = express();
 const { connect } = require("./config/database");
 connect();
 
-const session = require("express-session");
-app.use(
-  session({
-    secret: process.env.PASSPORT_SECRET, // replace this with a secret unique to your application
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+const corsOptions = {
+  origin: "http://localhost:3000", // Replace this with your frontend origin
+  credentials: true, // Allow sending cookies with the request
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Origin",
+    "Accept",
+    "X-Requested-With",
+  ],
+};
 
-const passport = require("./config/passport");
 // Middleware setup
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(morgan("dev"));
 
 const customRoutes = require("./routes/custom");
 
 // Set up routes
 app.use("/", indexRoutes);
-app.use("/auth", authRoutes);
 app.use("/custom", customRoutes);
 
+const { clerkAuth } = require("./middleware/auth");
+
 // Use the auth middleware for protected routes
-app.use("/endpoints", authMiddleware.isAuthenticated, endpointsRoutes);
-app.use("/api-keys", authMiddleware.isAuthenticated, apiKeysRoutes);
-app.use("/subscription", authMiddleware.isAuthenticated, subscriptionRoutes);
-app.use("/team", authMiddleware.isAuthenticated, teamRoutes);
-app.use("/usage", authMiddleware.isAuthenticated, usageRoutes);
+app.use("/endpoints", clerkAuth, endpointsRoutes);
+app.use("/api-keys", clerkAuth, apiKeysRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

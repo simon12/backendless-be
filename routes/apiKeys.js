@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { isAuthenticated } = require("../middleware/auth");
+const { clerkAuth } = require("../middleware/auth");
 const apiKeysController = require("../controllers/apiKeysController");
 
-router.get("/", isAuthenticated, apiKeysController.getApiKey);
-router.post("/", isAuthenticated, apiKeysController.createApiKey);
-router.put("/:id", apiKeysController.updateApiKey);
-router.delete("/:id", apiKeysController.deleteApiKey);
+router.get("/", clerkAuth, apiKeysController.getApiKey);
+router.post("/", clerkAuth, apiKeysController.createApiKey);
+router.put("/:id", clerkAuth, apiKeysController.updateApiKey);
+router.delete("/:id", clerkAuth, apiKeysController.deleteApiKey);
 
 module.exports = router;
