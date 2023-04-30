@@ -5,7 +5,6 @@ const apiKeysController = require("../controllers/apiKeysController");
 
 router.get("/", clerkAuth, apiKeysController.getApiKey);
 router.post("/", clerkAuth, apiKeysController.createApiKey);
-router.put("/:id", clerkAuth, apiKeysController.updateApiKey);
 router.delete("/:id", clerkAuth, apiKeysController.deleteApiKey);
 
 module.exports = router;

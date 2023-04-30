@@ -1,33 +1,24 @@
-const { Model, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
-class ApiKey extends Model {}
-
-ApiKey.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    key: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    UserId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-    },
+const UserApiKey = sequelize.define("UserApiKey", {
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    unique: true,
   },
-  {
-    sequelize,
-    modelName: "ApiKey",
-  }
-);
+  hashed_key: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  encrypted_key: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
 
-module.exports = ApiKey;
+UserApiKey.associate = function (models) {
+  UserApiKey.belongsTo(models.User, { foreignKey: "user_id" });
+};
+
+module.exports = UserApiKey;

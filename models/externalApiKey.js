@@ -1,3 +1,5 @@
+// this is the  model for the users LLM account API keys
+
 const { Model, DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 

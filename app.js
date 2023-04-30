@@ -52,6 +52,10 @@ app.use(morgan("dev"));
 
 const customRoutes = require("./routes/custom");
 
+const webhookRoutes = require("./routes/webhookRoutes");
+// Other routes and middleware
+app.use("/webhooks", webhookRoutes);
+
 // Set up routes
 app.use("/", indexRoutes);
 app.use("/custom", customRoutes);
